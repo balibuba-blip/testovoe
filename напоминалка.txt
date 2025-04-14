@@ -1,0 +1,53 @@
+http://localhost:8080
+
+/products
+/measure
+
+______________________________
+POST /measure
+
+win
+curl -X POST -H "Content-Type: application/json" -d "{\"name\":\"штуки\"}" http://localhost:8080/measure
+
+linux
+curl -X POST -H "Content-Type: application/json" -d '{"name":"штуки"}' http://localhost:8080/measure
+
+
+POST /product
+
+win
+curl -X POST -H "Content-Type: application/json" -d "{\"name\":\"Молоко\",\"quantity\":10,\"unit_cost\":65.5,\"measure_id\":1}" http://localhost:8080/product
+
+linux
+curl -X POST -H "Content-Type: application/json" -d "{\"name\":\"Молоко\",\"quantity\":10,\"unit_cost\":65.5,\"measure_id\":1}" http://localhost:8080/product
+______________________________
+GET /measure /product
+
+curl http://localhost:8080/ [measure/product]
+
+______________________________
+PUT /measure/:id
+
+Windows
+curl -X PUT -H "Content-Type: application/json" -d "{\"name\":\"шт.\"}" http://localhost:8080/measure/1
+
+linux
+curl -X PUT -H "Content-Type: application/json" -d '{"name":"шт."}' http://localhost:8080/measure/1
+
+PUT /product/:id
+
+win 
+curl -X PUT -H "Content-Type: application/json" -d "{\"name\":\"Молоко 2.5%\",\"quantity\":15,\"unit_cost\":70,\"measure_id\":1}" http://localhost:8080/product/4
+
+linux
+curl -X PUT -H "Content-Type: application/json" -d '{
+  "name":"Молоко 2.5%",
+  "quantity":15,
+  "unit_cost":70,
+  "measure_id":1
+}' http://localhost:8080/product/4
+
+______________________________
+DELETE /[measure/product]/:id
+
+curl -X DELETE http://localhost:8080/measure/1
