@@ -5,14 +5,14 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"test_task/internal/models"
-	"test_task/internal/services"
+	"testovoe/internal/models"
+	"testovoe/internal/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetAllMeasures(c *gin.Context) {
-	measures, err := services.GetAllProducts()
+	measures, err := services.GetAllMeasures()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -21,15 +21,23 @@ func GetAllMeasures(c *gin.Context) {
 }
 
 func GetMeasure(c *gin.Context) {
-	id := c.Param("id")
-
-	product, err := services.GetMeasureByID(id)
-
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid measure ID format"})
+		return
+	}
+
+	measure, err := services.GetMeasureByID(id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "measure not found"})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, product)
+
+	c.JSON(http.StatusOK, measure)
 }
 
 func CreateMeasure(c *gin.Context) {
@@ -95,6 +103,3 @@ func DeleteMeasure(c *gin.Context) {
 		"id":      id,
 	})
 }
-
-//!!!Допилить GetMeasure, UpdateMeasure, DeleteMeasure
-// Аналогично для GetAllMeasures, UpdateMeasure, DeleteMeasure

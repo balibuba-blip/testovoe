@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"test_task/internal/controllers"
+	"testovoe/internal/controllers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,10 +21,10 @@ func SetupRouter() *gin.Engine {
 	measures := router.Group("/measures")
 	{
 		measures.POST("", controllers.CreateMeasure)
-		//measures.GET("", controllers.GetAllMeasures)
-		//measures.GET("/:id", controllers.GetMeasure)
-		//measures.PUT("/:id", controllers.UpdateMeasure)
-		//measures.DELETE("/:id", controllers.DeleteMeasure)
+		measures.GET("", controllers.GetAllMeasures)
+		measures.GET("/:id", controllers.GetMeasure)
+		measures.PUT("/:id", controllers.UpdateMeasure)
+		measures.DELETE("/:id", controllers.DeleteMeasure)
 	}
 
 	return router

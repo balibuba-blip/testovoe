@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"test_task/internal/models"
+	"testovoe/internal/models"
 )
 
 const (

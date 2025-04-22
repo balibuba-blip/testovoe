@@ -5,21 +5,24 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"test_task/internal/models"
+	"testovoe/internal/models"
 )
 
 const (
 	createMeasureQuery  = `INSERT INTO measures (name) VALUES ($1) RETURNING id`
 	getMeasureQuery     = `SELECT id, name FROM measures WHERE id = $1`
 	getAllMeasuresQuery = `SELECT id, name FROM measures`
-	updateMeasureQuery  = `UPDATE measures SET name = $1 WHERE id = $2 RETURNING id`
+	updateMeasureQuery  = `UPDATE measures SET name = $1 WHERE id = $2 RETURNING id, name`
 	deleteMeasureQuery  = `DELETE FROM measures WHERE id = $1 RETURNING id`
 )
 
 func CreateMeasure(measure *models.Measure) (int, error) {
 	var id int
 	err := db.QueryRow(createMeasureQuery, measure.Name).Scan(&id)
-	return id, fmt.Errorf("failed to create measure: %w", err)
+	if err != nil {
+		return 0, fmt.Errorf("failed to create measure: %w", err)
+	}
+	return id, nil
 }
 
 func GetMeasureByID(id int) (*models.Measure, error) {
@@ -54,11 +57,11 @@ func GetAllMeasures() ([]models.Measure, error) {
 	return measures, nil
 }
 
-func UpdateMeasure(id int, m *models.Measure) (*models.Measure, error) {
+func UpdateMeasure(id int, newName *models.Measure) (*models.Measure, error) {
 	var updatedMeasure models.Measure
 	err := db.QueryRow(
 		updateMeasureQuery,
-		m.Name,
+		newName.Name,
 		id,
 	).Scan(
 		&updatedMeasure.ID,
@@ -66,8 +69,12 @@ func UpdateMeasure(id int, m *models.Measure) (*models.Measure, error) {
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to update measure: %w (id: %d)", err, id)
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("measure with ID %d not found", id)
+		}
+		return nil, fmt.Errorf("database error: %w", err)
 	}
+
 	return &updatedMeasure, nil
 }
 

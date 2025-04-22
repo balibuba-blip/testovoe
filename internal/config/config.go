@@ -16,8 +16,8 @@ func Load() *DBConfig {
 		DB_HOST:     getEnv("DB_HOST", "localhost"),
 		DB_PORT:     getEnv("DB_PORT", "5432"),
 		DB_USER:     getEnv("DB_USER", "postgres"),
-		DB_PASSWORD: getEnv("DB_PASSWORD", ""),
-		DB_NAME:     getEnv("DB_NAME", "products"),
+		DB_PASSWORD: getEnv("DB_PASSWORD", "gfhjkm777"),
+		DB_NAME:     getEnv("DB_NAME", "testovik"),
 		DB_SSL_MODE: getEnv("DB_SSLMODE", "disable"),
 	}
 }

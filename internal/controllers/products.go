@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"test_task/internal/models"
-	"test_task/internal/services"
+	"testovoe/internal/models"
+	"testovoe/internal/services"
 
 	"github.com/gin-gonic/gin"
 )

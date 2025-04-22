@@ -1,11 +1,12 @@
 package services
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"strconv"
-	"test_task/internal/models"
-	"test_task/internal/repositories"
+	"testovoe/internal/models"
+	"testovoe/internal/repositories"
 )
 
 func CreateMeasure(measure *models.Measure) (int, error) {
@@ -31,12 +32,16 @@ func UpdateMeasure(id int, updateData *models.Measure) (*models.Measure, error) 
 		return nil, errors.New("measure name cannot be empty")
 	}
 
-	//проверка существует ли measure
-	if _, err := GetMeasureByID(strconv.Itoa(id)); err != nil {
-		return nil, fmt.Errorf("measure not found: %w", err)
+	//проверка существует ли и обновление
+	updatedMeasure, err := repositories.UpdateMeasure(id, updateData)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, fmt.Errorf("measure not found")
+		}
+		return nil, fmt.Errorf("failed to update measure: %w", err)
 	}
 
-	return repositories.UpdateMeasure(id, updateData)
+	return updatedMeasure, nil
 }
 
 func DeleteMeasure(id int) error {

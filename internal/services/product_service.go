@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-	"test_task/internal/models"
-	"test_task/internal/repositories"
+	"testovoe/internal/models"
+	"testovoe/internal/repositories"
 )
 
 // возвращает 1 продукт по id
