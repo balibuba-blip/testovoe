@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 type DBConfig struct {
 	DB_HOST     string
@@ -9,6 +12,16 @@ type DBConfig struct {
 	DB_PASSWORD string
 	DB_NAME     string
 	DB_SSL_MODE string //не уверен что нужно
+}
+
+func (c *DBConfig) GetConnectionString() string {
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		c.DB_HOST,
+		c.DB_PORT,
+		c.DB_USER,
+		c.DB_PASSWORD,
+		c.DB_NAME,
+		c.DB_SSL_MODE)
 }
 
 func Load() *DBConfig {
