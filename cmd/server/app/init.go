@@ -2,6 +2,7 @@ package app
 
 import (
 	"database/sql"
+	"log"
 	"testovoe/config"
 	"testovoe/database"
 	mrepo "testovoe/internal/measures/repository"
@@ -25,9 +26,8 @@ type App struct {
 func Initialize() *App {
 	cfg := config.Load()
 
-	// Инициализация БД
 	if err := database.InitDB(cfg.GetConnectionString()); err != nil {
-		panic("Failed to connect to database: " + err.Error())
+		log.Fatal("Failed to connect to database: ", err)
 	}
 
 	app := &App{
@@ -37,28 +37,38 @@ func Initialize() *App {
 	}
 
 	app.initializeRoutes()
-
 	return app
 }
 
-func (a *App) initializeRoutes() {
-	// Инициализация компонентов продуктов
+func (a *App) initProducts() {
+	log.Println("Initializing products routes...")
 	productRepo := prepo.NewRepository(a.DB)
 	productService := pservice.NewService(productRepo)
 	productHandler := phandlers.NewHandler(productService)
-	productRouter := ptransport.NewRouter(productHandler)
-	productRouter.RegisterRoutes(a.Router)
+	ptransport.NewRouter(productHandler).RegisterRoutes(a.Router)
+}
 
-	// Инициализация компонентов мер
+func (a *App) initMeasures() {
+	log.Println("Initializing measures routes...")
 	measureRepo := mrepo.NewRepository(a.DB)
 	measureService := mservice.NewService(measureRepo)
 	measureHandler := mhandlers.NewHandler(measureService)
-	measureRouter := mtransport.NewRouter(measureHandler)
-	measureRouter.RegisterRoutes(a.Router)
+	mtransport.NewRouter(measureHandler).RegisterRoutes(a.Router)
+}
+
+func (a *App) initializeRoutes() {
+	if a.DB == nil {
+		log.Fatal("DB connection is nil")
+	}
+
+	a.initProducts()
+	a.initMeasures()
+
+	log.Println("All routes initialized successfully")
 }
 
 func (a *App) Close() {
 	if err := database.CloseDB(); err != nil {
-		panic("Failed to close database: " + err.Error())
+		log.Printf("Error closing database: %v", err)
 	}
 }
