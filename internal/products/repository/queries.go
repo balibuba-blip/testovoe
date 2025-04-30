@@ -4,7 +4,8 @@ const (
 	getAllProductsQuery = `
         SELECT id, name, quantity, unit_cost, measure_id 
         FROM products
-        ORDER BY id`
+        ORDER BY id
+        LIMIT $1 OFFSET $2`
 
 	createProductQuery = `
         INSERT INTO products (name, quantity, unit_cost, measure_id)

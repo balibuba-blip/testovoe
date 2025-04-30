@@ -16,14 +16,23 @@ func NewService(repo interfaces.ProductRepository) *Service {
 }
 
 func (s *Service) GetByID(id int) (*models.Product, error) {
+	if id <= 0 {
+		return nil, errors.New("invalid ID")
+	}
 	return s.repo.GetByID(id)
 }
 
-func (s *Service) GetAll() ([]models.Product, error) {
-	return s.repo.GetAll()
+func (s *Service) GetAll(limit, offset int) ([]models.Product, error) {
+	if limit <= 0 || offset < 0 {
+		return nil, errors.New("invalid pagination parameters")
+	}
+	return s.repo.GetAll(limit, offset)
 }
 
 func (s *Service) Create(p *models.Product) (int, error) {
+	if p.MeasureID <= 0 {
+		return 0, errors.New("invalid measure ID")
+	}
 	if p.Name == "" {
 		return 0, errors.New("product name cannot be empty")
 	}

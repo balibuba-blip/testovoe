@@ -3,8 +3,9 @@ package repository
 const (
 	getAllMeasuresQuery = `
 		SELECT id, name 
-		FROM measures
-		ORDER BY id`
+    	FROM measures
+    	ORDER BY id
+    	LIMIT $1 OFFSET $2`
 
 	getMeasureByIDQuery = `
 		SELECT id, name 

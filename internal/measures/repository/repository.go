@@ -16,8 +16,9 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetAll(ctx context.Context) ([]models.Measure, error) {
-	rows, err := r.db.QueryContext(ctx, getAllMeasuresQuery)
+func (r *Repository) GetAll(ctx context.Context, limit, offset int) ([]models.Measure, error) {
+
+	rows, err := r.db.QueryContext(ctx, getAllMeasuresQuery, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query measures: %w", err)
 	}
@@ -40,6 +41,9 @@ func (r *Repository) GetAll(ctx context.Context) ([]models.Measure, error) {
 }
 
 func (r *Repository) GetByID(ctx context.Context, id int) (*models.Measure, error) {
+	if id <= 0 {
+		return nil, fmt.Errorf("invalid ID")
+	}
 	var m models.Measure
 	err := r.db.QueryRowContext(ctx, getMeasureByIDQuery, id).
 		Scan(&m.ID, &m.Name)

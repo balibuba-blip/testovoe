@@ -19,7 +19,19 @@ func NewHandler(s *service.Service) *Handler {
 }
 
 func (h *Handler) GetAll(c *gin.Context) {
-	measures, err := h.service.GetAll(c.Request.Context())
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if err != nil || limit <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid limit value"})
+		return
+	}
+
+	offset, err := strconv.Atoi(c.DefaultQuery("offset", "0"))
+	if err != nil || offset < 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid offset value"})
+		return
+	}
+
+	measures, err := h.service.GetAll(c.Request.Context(), limit, offset)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -29,11 +41,10 @@ func (h *Handler) GetAll(c *gin.Context) {
 
 func (h *Handler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ID format"})
+	if err != nil || id <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid product ID"})
 		return
 	}
-
 	measure, err := h.service.GetByID(c.Request.Context(), id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "measure not found"})

@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"testovoe/internal/products/models"
 )
 
@@ -30,31 +29,24 @@ func (r *Repository) GetByID(id int) (*models.Product, error) {
 	return &product, err
 }
 
-func (r *Repository) GetAll() ([]models.Product, error) {
-	rows, err := r.db.Query(getAllProductsQuery)
+func (r *Repository) GetAll(limit, offset int) ([]models.Product, error) {
+	rows, err := r.db.Query(getAllProductsQuery, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to query products: %w", err)
 	}
 	defer rows.Close()
 
 	var products []models.Product
 	for rows.Next() {
 		var p models.Product
-		if err := rows.Scan(
-			&p.ID,
-			&p.Name,
-			&p.Quantity,
-			&p.UnitCost,
-			&p.MeasureID,
-		); err != nil {
-			log.Printf("Error scanning product row: %v", err)
-			continue
+		if err := rows.Scan(&p.ID, &p.Name, &p.Quantity, &p.UnitCost, &p.MeasureID); err != nil {
+			return nil, fmt.Errorf("failed to scan product: %w", err)
 		}
 		products = append(products, p)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("rows error: %w", err)
 	}
 
 	return products, nil

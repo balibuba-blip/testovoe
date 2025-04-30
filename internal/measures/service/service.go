@@ -20,8 +20,11 @@ func (s *Service) GetByID(ctx context.Context, id int) (*models.Measure, error) 
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *Service) GetAll(ctx context.Context) ([]models.Measure, error) {
-	return s.repo.GetAll(ctx)
+func (s *Service) GetAll(ctx context.Context, limit, offset int) ([]models.Measure, error) {
+	if limit <= 0 || offset < 0 {
+		return nil, errors.New("invalid pagination parameters")
+	}
+	return s.repo.GetAll(ctx, limit, offset) // Передаем параметры
 }
 
 func (s *Service) Create(ctx context.Context, m *models.Measure) (int, error) {
