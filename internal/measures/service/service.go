@@ -4,37 +4,37 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"testovoe/internal/interfaces"
 	"testovoe/internal/measures/models"
+	"testovoe/internal/repository"
 )
 
-type Service struct {
-	repo interfaces.MeasureRepository
+type MeasureService struct {
+	repo *repository.MeasureRepository
 }
 
-func NewService(repo interfaces.MeasureRepository) *Service {
-	return &Service{repo: repo}
+func NewService(repo *repository.MeasureRepository) *MeasureService {
+	return &MeasureService{repo: repo}
 }
 
-func (s *Service) GetByID(ctx context.Context, id int) (*models.Measure, error) {
+func (s *MeasureService) GetByID(ctx context.Context, id int) (*models.Measure, error) {
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *Service) GetAll(ctx context.Context, limit, offset int) ([]models.Measure, error) {
+func (s *MeasureService) GetAll(ctx context.Context, limit, offset int) ([]models.Measure, error) {
 	if limit <= 0 || offset < 0 {
 		return nil, errors.New("invalid pagination parameters")
 	}
 	return s.repo.GetAll(ctx, limit, offset) // Передаем параметры
 }
 
-func (s *Service) Create(ctx context.Context, m *models.Measure) (int, error) {
+func (s *MeasureService) Create(ctx context.Context, m *models.Measure) (int, error) {
 	if m.Name == "" {
 		return 0, errors.New("measure name cannot be empty")
 	}
 	return s.repo.Create(ctx, m)
 }
 
-func (s *Service) Update(ctx context.Context, id int, measure *models.Measure) (*models.Measure, error) {
+func (s *MeasureService) Update(ctx context.Context, id int, measure *models.Measure) (*models.Measure, error) {
 	if measure.Name == "" {
 		return nil, fmt.Errorf("measure name cannot be empty")
 	}
@@ -51,7 +51,7 @@ func (s *Service) Update(ctx context.Context, id int, measure *models.Measure) (
 	return updatedMeasure, nil
 }
 
-func (s *Service) Delete(ctx context.Context, id int) error {
+func (s *MeasureService) Delete(ctx context.Context, id int) error {
 	if _, err := s.repo.GetByID(ctx, id); err != nil {
 		return fmt.Errorf("measure not found: %w", err)
 	}

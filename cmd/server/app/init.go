@@ -5,14 +5,13 @@ import (
 	"log"
 	"testovoe/config"
 	"testovoe/database"
-	mrepo "testovoe/internal/measures/repository"
 	mservice "testovoe/internal/measures/service"
 	mtransport "testovoe/internal/measures/transport"
 	mhandlers "testovoe/internal/measures/transport/http/handlers"
-	prepo "testovoe/internal/products/repository"
 	pservice "testovoe/internal/products/service"
 	ptransport "testovoe/internal/products/transport"
 	phandlers "testovoe/internal/products/transport/http/handlers"
+	"testovoe/internal/repository"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,16 +41,16 @@ func Initialize() *App {
 
 func (a *App) initProducts() {
 	log.Println("Initializing products routes...")
-	productRepo := prepo.NewRepository(a.DB)
-	productService := pservice.NewService(productRepo)
+	repo := repository.NewRepository(a.DB)
+	productService := pservice.NewService(repo.Product)
 	productHandler := phandlers.NewHandler(productService)
 	ptransport.NewRouter(productHandler).RegisterRoutes(a.Router)
 }
 
 func (a *App) initMeasures() {
 	log.Println("Initializing measures routes...")
-	measureRepo := mrepo.NewRepository(a.DB)
-	measureService := mservice.NewService(measureRepo)
+	repo := repository.NewRepository(a.DB)
+	measureService := mservice.NewService(repo.Measure)
 	measureHandler := mhandlers.NewHandler(measureService)
 	mtransport.NewRouter(measureHandler).RegisterRoutes(a.Router)
 }

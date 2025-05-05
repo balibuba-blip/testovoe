@@ -1,6 +1,7 @@
 package repository
 
 const (
+	//products
 	getAllProductsQuery = `
         SELECT id, name, quantity, unit_cost, measure_id 
         FROM products
@@ -22,4 +23,31 @@ const (
         DELETE FROM products
         WHERE id = $1
         RETURNING id`
+
+	//Measures
+	getAllMeasuresQuery = `
+		SELECT id, name 
+    	FROM measures
+    	ORDER BY id
+    	LIMIT $1 OFFSET $2`
+
+	getMeasureByIDQuery = `
+		SELECT id, name 
+		FROM measures 
+		WHERE id = $1`
+
+	createMeasureQuery = `
+		INSERT INTO measures (name)
+		VALUES ($1)
+		RETURNING id`
+
+	updateMeasureQuery = `
+		UPDATE measures
+		SET name = $1
+		WHERE id = $2
+		RETURNING id, name`
+
+	deleteMeasureQuery = `
+		DELETE FROM measures
+		WHERE id = $1`
 )
