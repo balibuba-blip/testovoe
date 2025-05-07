@@ -42,7 +42,7 @@ func (h *Handler) GetAll(c *gin.Context) {
 func (h *Handler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid product ID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid measure ID"})
 		return
 	}
 	measure, err := h.service.GetByID(c.Request.Context(), id)
@@ -55,6 +55,10 @@ func (h *Handler) GetByID(c *gin.Context) {
 
 func (h *Handler) Create(c *gin.Context) {
 	var measure models.Measure
+	if measure.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "measure name cannot be empty"})
+		return
+	}
 	if err := c.ShouldBindJSON(&measure); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

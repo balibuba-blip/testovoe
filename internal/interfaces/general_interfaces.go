@@ -6,7 +6,18 @@ import (
 	productsmodels "testovoe/internal/products/models"
 )
 
+type EntityType string
+
+const (
+	EntityTypeProduct EntityType = "product"
+	EntityTypeMeasure EntityType = "measure"
+	EntityTypeAll     EntityType = "all"
+)
+
 type Repository interface {
+	// Универсальный метод
+	GetAllEntities(entityType EntityType, ctx context.Context, limit, offset int) (interface{}, error)
+
 	// Measure methods
 	GetMeasureByID(ctx context.Context, id int) (*measuresmodels.Measure, error)
 	GetAllMeasures(ctx context.Context, limit, offset int) ([]measuresmodels.Measure, error)

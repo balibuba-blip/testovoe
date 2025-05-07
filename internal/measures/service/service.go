@@ -24,7 +24,7 @@ func (s *MeasureService) GetAll(ctx context.Context, limit, offset int) ([]model
 	if limit <= 0 || offset < 0 {
 		return nil, errors.New("invalid pagination parameters")
 	}
-	return s.repo.GetAll(ctx, limit, offset) // Передаем параметры
+	return s.repo.GetAll(ctx, limit, offset)
 }
 
 func (s *MeasureService) Create(ctx context.Context, m *models.Measure) (int, error) {
